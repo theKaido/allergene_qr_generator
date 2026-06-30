@@ -4,3 +4,4 @@ python_venv
 .vscode/
 /Users/jonny/Desktop/allergene_qr_generator/backend/python_venv
 /Users/jonny/Desktop/allergene_qr_generator/backend/.env
+__pycache__
