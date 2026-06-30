@@ -1,3 +1,7 @@
 # Created by venv; see https://docs.python.org/3/library/venv.html
 python_venv
+.env
+.vscode/
 /Users/jonny/Desktop/allergene_qr_generator/backend/python_venv
+/Users/jonny/Desktop/allergene_qr_generator/backend/.env
+python_venv
