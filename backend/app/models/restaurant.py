@@ -6,5 +6,5 @@ class Restaurant(Base):
     __tablename__ = "restaurant"
     id = Column(Integer, primary_key=True)
     nom = Column(String, nullable=False)
-    type = Column(String)
+    categorie = Column(String)
     auth_id = Column(Integer, ForeignKey("auth.id"), nullable=False)
