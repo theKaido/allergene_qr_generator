@@ -7,3 +7,4 @@ class Auth(Base):
     id = Column(Integer, primary_key=True)
     login = Column(String, nullable=False)
     password = Column(String, nullable=False)
+    email = Column(String, nullable=False) 
