@@ -5,6 +5,8 @@ from app.routers.plat import router as router_plat
 from app.routers.restaurant import router as router_restaurant
 from app.routers.auth import router as router_auth
 from app.routers.plat_ingredient import router as router_plat_ingredient
+from app.routers.allergene_ingredient import router as router_allergene_ingredient
+
 
 
 app = FastAPI()
