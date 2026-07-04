@@ -17,6 +17,8 @@ app.include_router(router_plat, prefix="/plats", tags=["Plats"])
 app.include_router(router_restaurant, prefix="/restaurants", tags=["Restaurants"])
 app.include_router(router_auth, prefix="/auth", tags=["Authentificiation"])
 app.include_router(router_plat_ingredient, prefix="/plat_ing", tags=["Plat_Ingredient"])
+app.include_router(router_allergene_ingredient, tags=["AllergeneIngredient"])
+
 
 @app.get("/health")
 def health():
