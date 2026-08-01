@@ -22,7 +22,7 @@ def create_access_token(data: dict) -> str:
     now = datetime.now(timezone.utc)
 
     payload = {
-        "sub": data["auth_id"],
+        "sub": str(data["auth_id"]),
         "iat": now,
         "exp": now + timedelta(minutes=expire_minutes),
     }
