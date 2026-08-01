@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from app.dependencies.database import DbSession
 from app.models.auth import Auth
 from app.schemas.auth import Authentification
@@ -24,12 +25,16 @@ def create_new_user(db: DbSession, body: Authentification):
     return user
 
 
+
 @router.post("/login")
-def login(db: DbSession, body: Authentification):
-    user = db.query(Auth).filter(Auth.login == body.login).first()
+def login(
+    db: DbSession,
+    form_data: OAuth2PasswordRequestForm = Depends(),
+):
+    user = db.query(Auth).filter(Auth.login == form_data.username).first()
     if user is None:
         raise HTTPException(status_code=401, detail="Login ou mot de passe incorrect")
-    if not verify_password(body.password, user.password):
+    if not verify_password(form_data.password, user.password):
         raise HTTPException(status_code=401, detail="Login ou mot de passe incorrect")
     token = create_access_token({"auth_id": user.id})
     return {"access_token": token, "token_type": "bearer"}
