@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from app.routers.allergene import router as router_allergene
 from app.routers.ingredient import router as router_ingredient
@@ -7,7 +8,7 @@ from app.routers.auth import router as router_auth
 from app.routers.plat_ingredient import router as router_plat_ingredient
 from app.routers.allergene_ingredient import router as router_allergene_ingredient
 
-
+load_dotenv()
 
 app = FastAPI()
 
