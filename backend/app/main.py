@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+
+from app.dependencies.auth import get_current_user
 from app.routers.allergene import router as router_allergene
 from app.routers.ingredient import router as router_ingredient
 from app.routers.plat import router as router_plat
@@ -12,8 +14,10 @@ load_dotenv()
 
 app = FastAPI()
 
-app.include_router(router_allergene, prefix="/allergenes", tags=["Allergenes"])
-app.include_router(router_ingredient, prefix="/ingredients", tags=["Ingredients"])
+app.include_router(router_allergene, prefix="/allergenes", tags=["Allergenes"],
+    dependencies=[Depends(get_current_user)])
+app.include_router(router_ingredient, prefix="/ingredients", tags=["Ingredients"],
+    dependencies=[Depends(get_current_user)])
 app.include_router(router_plat, prefix="/plats", tags=["Plats"])
 app.include_router(router_restaurant, prefix="/restaurants", tags=["Restaurants"])
 app.include_router(router_auth, prefix="/auth", tags=["Authentificiation"])
