@@ -1,9 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
+
+from app.dependencies.auth import CurrentUser
 from app.dependencies.database import DbSession
 from app.models.auth import Auth
-from app.schemas.auth import Authentification
-from app.utils.security import verify_password, hash_password, create_access_token, decode_access_token
+from app.schemas.auth import Authentification, PasswordUpdate
+from app.utils.security import verify_password, hash_password, create_access_token
 
 router = APIRouter()
 
@@ -39,13 +41,11 @@ def login(
     token = create_access_token({"auth_id": user.id})
     return {"access_token": token, "token_type": "bearer"}
 
-@router.put("/authentification/{login}")
-def update_password(db: DbSession, login: str, body: Authentification):
-    user = db.query(Auth).filter(Auth.login == body.login).first()
-    check_password = verify_password(plain_password=body.password, hash_password=user.password)
-    if check_password is False:
+@router.put("/authentification/password")
+def update_password(db: DbSession, body: PasswordUpdate, current_user: CurrentUser):
+    if not verify_password(plain_password=body.current_password, hashed_password=current_user.password):
         raise HTTPException(status_code=401, detail="Mot de passe incorrect")
-    user.password = hash_password(body.password)
+    current_user.password = hash_password(body.new_password)
     db.commit()
-    db.refresh(user)
+    db.refresh(current_user)
     return {"message": "Mot de passe modifié avec succées"}

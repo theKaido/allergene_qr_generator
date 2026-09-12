@@ -1,3 +1,4 @@
+from typing import Annotated
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 import jwt
@@ -34,3 +35,6 @@ def get_current_user(db: DbSession, token: str = Depends(oauth2_scheme)) -> Auth
         raise credentials_exception
 
     return user
+
+
+CurrentUser = Annotated[Auth, Depends(get_current_user)]
