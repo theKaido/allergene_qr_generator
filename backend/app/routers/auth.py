@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+import os
+
+from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.dependencies.auth import CurrentUser
@@ -55,13 +57,15 @@ def create_new_user(db: DbSession, body: Authentification):
 @router.post("/login")
 def login(
     db: DbSession,
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    response: Response,
+    form_data: OAuth2PasswordRequestForm = Depends()
 ):
     """Authenticate a user and issue a JWT access token.
 
     Args:
         db: Database session.
         form_data: OAuth2 form data containing the login and password.
+        response: Response object containing the JWT access token.
 
     Returns:
         A bearer access token.
@@ -76,7 +80,15 @@ def login(
     if not verify_password(form_data.password, user.password):
         raise HTTPException(status_code=401, detail="Login ou mot de passe incorrect")
     token = create_access_token({"auth_id": user.id})
-    return {"access_token": token, "token_type": "bearer"}
+    expire_minute = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        max_age=expire_minute * 60,
+    )
+    return {"message": "Connexion réussie"}
 
 
 @router.put("/authentification/password")
@@ -102,4 +114,4 @@ def update_password(db: DbSession, body: PasswordUpdate, current_user: CurrentUs
     current_user.password = hash_password(body.new_password)
     db.commit()
     db.refresh(current_user)
-    return {"message": "Mot de passe modifié avec succées"}
+    return {"message": "Mot de passe modifié avec succès"}
