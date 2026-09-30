@@ -1,22 +1,19 @@
 from typing import Annotated
 
 import jwt
-from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, Request
 
 from app.dependencies.database import DbSession
 from app.models.auth import Auth
 from app.utils.security import decode_access_token
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
-
-def get_current_user(db: DbSession, token: str = Depends(oauth2_scheme)) -> Auth:
+def get_current_user(db: DbSession, request: Request) -> Auth:
     """Resolve the authenticated user from a bearer JWT token.
 
     Args:
         db: Database session.
-        token: JWT access token extracted from the Authorization header.
+        request: Incoming request, used to read the access_token cookie.
 
     Returns:
         The authenticated user.
@@ -25,12 +22,16 @@ def get_current_user(db: DbSession, token: str = Depends(oauth2_scheme)) -> Auth
         HTTPException: If the token is missing, expired, invalid, or doesn't match
             an existing user.
 
+
     """
     credentials_exception = HTTPException(
         status_code=401,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    token = request.cookies.get("access_token")
+    if token is None:
+        raise credentials_exception
     try:
         payload = decode_access_token(token)
     except jwt.ExpiredSignatureError:
