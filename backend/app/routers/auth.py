@@ -64,11 +64,12 @@ def login(
 
     Args:
         db: Database session.
+        response: Outgoing response, used to set the access_token cookie.
         form_data: OAuth2 form data containing the login and password.
-        response: Response object containing the JWT access token.
 
     Returns:
-        A bearer access token.
+        A confirmation message. The JWT itself is sent in an HttpOnly
+        access_token cookie, not in the response body.
 
     Raises:
         HTTPException: If the login or password is incorrect.

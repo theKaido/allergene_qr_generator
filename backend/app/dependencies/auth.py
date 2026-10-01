@@ -9,7 +9,7 @@ from app.utils.security import decode_access_token
 
 
 def get_current_user(db: DbSession, request: Request) -> Auth:
-    """Resolve the authenticated user from a bearer JWT token.
+    """Resolve the authenticated user from the JWT stored in the access_token cookie.
 
     Args:
         db: Database session.
@@ -21,7 +21,6 @@ def get_current_user(db: DbSession, request: Request) -> Auth:
     Raises:
         HTTPException: If the token is missing, expired, invalid, or doesn't match
             an existing user.
-
 
     """
     credentials_exception = HTTPException(

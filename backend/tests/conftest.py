@@ -115,10 +115,13 @@ def client_fastapi(test_db):
 
 @pytest.fixture(scope="function")
 def authenticated_test_client(client_fastapi):
-    """Register and log in a test user, and attach the token to the client.
+    """Register and log in a test user.
+
+    The login response sets the access_token cookie, which the TestClient
+    stores and sends back automatically on every following request.
 
     Returns:
-        The client_fastapi client, with an Authorization header set so it can
+        The client_fastapi client, holding the access_token cookie so it can
         call routes protected by get_current_user.
 
     """
@@ -127,11 +130,9 @@ def authenticated_test_client(client_fastapi):
         json={"login": "test", "password": "test", "email": "test@test.com"},
     )
 
-    loged = client_fastapi.post(
+    client_fastapi.post(
         "/auth/login", data={"username": "test", "password": "test"}
     )
-    token = loged.json()["access_token"]
-    client_fastapi.headers["Authorization"] = f"Bearer {token}"
 
     return client_fastapi
 
@@ -161,9 +162,7 @@ def second_authenticated_test_client(test_db):
         "/auth/authentification",
         json={"login": "test2", "password": "test2", "email": "test2@test.com"},
     )
-    loged = client.post("/auth/login", data={"username": "test2", "password": "test2"})
-    token = loged.json()["access_token"]
-    client.headers["Authorization"] = f"Bearer {token}"
+    client.post("/auth/login", data={"username": "test2", "password": "test2"})
 
     try:
         yield client
