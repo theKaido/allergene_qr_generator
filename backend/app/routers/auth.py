@@ -56,9 +56,7 @@ def create_new_user(db: DbSession, body: Authentification):
 
 @router.post("/login")
 def login(
-    db: DbSession,
-    response: Response,
-    form_data: OAuth2PasswordRequestForm = Depends()
+    db: DbSession, response: Response, form_data: OAuth2PasswordRequestForm = Depends()
 ):
     """Authenticate a user and issue a JWT access token.
 

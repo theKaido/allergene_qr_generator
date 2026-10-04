@@ -130,9 +130,7 @@ def authenticated_test_client(client_fastapi):
         json={"login": "test", "password": "test", "email": "test@test.com"},
     )
 
-    client_fastapi.post(
-        "/auth/login", data={"username": "test", "password": "test"}
-    )
+    client_fastapi.post("/auth/login", data={"username": "test", "password": "test"})
 
     return client_fastapi
 
