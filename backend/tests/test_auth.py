@@ -41,11 +41,13 @@ def test_login(client_fastapi):
         "/auth/login", data={"username": "login_user", "password": "azerty"}
     )
     assert response.status_code == 200
+    assert "access_token" in response.cookies
 
     response = client_fastapi.post(
         "/auth/login", data={"username": "login_user", "password": "wrong_password"}
     )
     assert response.status_code == 401
+    assert "access_token" not in response.cookies
 
     response = client_fastapi.post(
         "/auth/login", data={"username": "unknown_user", "password": "azerty"}
