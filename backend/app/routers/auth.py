@@ -81,7 +81,7 @@ def login(
     if not verify_password(form_data.password, user.password):
         raise HTTPException(status_code=401, detail="Login ou mot de passe incorrect")
     token = create_access_token({"auth_id": user.id})
-    expire_minute = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+    expire_minute = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
     response.set_cookie(
         key="access_token",
