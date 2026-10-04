@@ -79,3 +79,17 @@ def test_update_password(authenticated_test_client):
         "/auth/login", data={"username": "test", "password": "new_test_password"}
     )
     assert response.status_code == 200
+
+
+def test_logout(authenticated_test_client):
+    """Test POST /auth/logout, protected routes are rejected afterwards."""
+    response = authenticated_test_client.get("/restaurants/restaurant")
+    assert response.status_code == 200
+    assert "access_token" in authenticated_test_client.cookies
+
+    response = authenticated_test_client.post("/auth/logout")
+    assert response.status_code == 200
+    assert "access_token" not in authenticated_test_client.cookies
+
+    response = authenticated_test_client.get("/restaurants/restaurant")
+    assert response.status_code == 401

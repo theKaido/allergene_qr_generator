@@ -116,3 +116,18 @@ def update_password(db: DbSession, body: PasswordUpdate, current_user: CurrentUs
     db.commit()
     db.refresh(current_user)
     return {"message": "Mot de passe modifié avec succès"}
+
+
+@router.post("/logout")
+def logout(response: Response):
+    """Logout the current user.
+
+    Args:
+        response: Outgoing response, used to delete the access_token cookie.
+
+    Returns:
+        A confirmation message.
+
+    """
+    response.delete_cookie(key="access_token")
+    return {"message": "Déconnexion réussie"}
