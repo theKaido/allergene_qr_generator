@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+import os
+
+from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.dependencies.auth import CurrentUser
@@ -54,17 +56,18 @@ def create_new_user(db: DbSession, body: Authentification):
 
 @router.post("/login")
 def login(
-    db: DbSession,
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: DbSession, response: Response, form_data: OAuth2PasswordRequestForm = Depends()
 ):
     """Authenticate a user and issue a JWT access token.
 
     Args:
         db: Database session.
+        response: Outgoing response, used to set the access_token cookie.
         form_data: OAuth2 form data containing the login and password.
 
     Returns:
-        A bearer access token.
+        A confirmation message. The JWT itself is sent in an HttpOnly
+        access_token cookie, not in the response body.
 
     Raises:
         HTTPException: If the login or password is incorrect.
@@ -76,7 +79,15 @@ def login(
     if not verify_password(form_data.password, user.password):
         raise HTTPException(status_code=401, detail="Login ou mot de passe incorrect")
     token = create_access_token({"auth_id": user.id})
-    return {"access_token": token, "token_type": "bearer"}
+    expire_minute = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        max_age=expire_minute * 60,
+    )
+    return {"message": "Connexion réussie"}
 
 
 @router.put("/authentification/password")
@@ -102,4 +113,19 @@ def update_password(db: DbSession, body: PasswordUpdate, current_user: CurrentUs
     current_user.password = hash_password(body.new_password)
     db.commit()
     db.refresh(current_user)
-    return {"message": "Mot de passe modifié avec succées"}
+    return {"message": "Mot de passe modifié avec succès"}
+
+
+@router.post("/logout")
+def logout(response: Response):
+    """Logout the current user.
+
+    Args:
+        response: Outgoing response, used to delete the access_token cookie.
+
+    Returns:
+        A confirmation message.
+
+    """
+    response.delete_cookie(key="access_token")
+    return {"message": "Déconnexion réussie"}
