@@ -4,6 +4,7 @@ from app.main import app
 
 client = TestClient(app)
 
+
 def test_cors_preflight_allowed_origin() -> None:
     """Preflight from the frontend origin is accepted with credentials."""
     response = client.options(
