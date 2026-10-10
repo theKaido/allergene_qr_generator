@@ -32,6 +32,12 @@ Prerequisites: Docker and Docker Compose (Docker Desktop on macOS/Windows).
    JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
    ```
 
+   Then create `frontend/.env` from its template. It holds `VITE_API_URL`, the backend URL the browser calls:
+
+   ```bash
+   cp frontend/.env.example frontend/.env
+   ```
+
 3. Start the stack:
 
    ```bash
@@ -114,9 +120,12 @@ Prerequisites: Node.js 24 (see [Prerequisites](#prerequisites)).
 
 ```bash
 cd frontend
+cp .env.example .env
 npm ci
 npm run dev
 ```
+
+`.env` sets `VITE_API_URL`, the backend URL called by the browser (`http://localhost:8000` by default). Restart `npm run dev` after changing it.
 
 The frontend is then available at `http://localhost:5173`. Other scripts: `npm run lint` (ESLint) and `npm run build` (type check with `tsc`, then production build).
 

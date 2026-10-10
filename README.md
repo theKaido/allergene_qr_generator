@@ -128,6 +128,7 @@ Requires Docker and Docker Compose.
 git clone git@github.com:theKaido/kaleidogram.git
 cd kaleidogram
 cp .env.example .env
+cp frontend/.env.example frontend/.env
 docker compose up
 ```
 
